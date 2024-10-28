@@ -1,24 +1,40 @@
-import { useState, useEffect } from "react";
-
-function Hello() {
-  function byeFn() {
-    console.log("Bye :(");
-  }
-  function hiFn() {
-    console.log("Hi :)");
-    return byeFn; // component가 파괴될 때도 function을 실행하고 싶다면 byeFn을 return 해야함
-  }
-  useEffect(hiFn, []); // useEffect에서 function 받고, 이 function은 dependency가 변화할 때 호출됨
-  return <h1>Hello</h1>;
-}
+import { useState } from "react";
 
 function App() {
-  const [showing, setShowing] = useState(false);
-  const onClick = () => setShowing((prev) => !prev); // setShowing 통해서 이전 value 받아오고, 그 value의 반대값 return
+  const [toDo, setToDo] = useState("");
+  const [toDos, setToDos] = useState([]);
+  const onChange = (event) => setToDo(event.target.value);
+  const onSubmit = (event) => {
+    event.preventDefault();
+    if (toDo === "") {
+      return;
+    }
+    setToDos((currentArray) => [toDo, ...currentArray]);
+    setToDo("");
+  };
   return (
     <div>
-      {showing ? <Hello /> : null}
-      <button onClick={onClick}>{showing ? "Hide" : "Show"}</button>
+      <h1>My To Dos({toDos.length})</h1>
+      <form onSubmit={onSubmit}>
+        <input
+          onChange={onChange}
+          value={toDo}
+          type="text"
+          placeholder="Write your to do..."
+        />
+        <button>Add To Do</button>
+      </form>
+      <hr />
+      <ul>
+        {toDos.map(
+          (
+            item,
+            index // map() : array 재구성
+          ) => (
+            <li key={index}>{item}</li>
+          )
+        )}
+      </ul>
     </div>
   );
 }
